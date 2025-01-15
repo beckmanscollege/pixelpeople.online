@@ -1,0 +1,344 @@
+@font-face {
+  font-family: 'JiggoVF';
+  src: url('https://cdn.glitch.global/33a2a753-6d80-4052-af24-780bb51141bd/JiggoVF.woff?v=1736862148340') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Topaz8';
+  src: url('https://cdn.glitch.global/33a2a753-6d80-4052-af24-780bb51141bd/Topaz-8%20(1).woff?v=1736862630402') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Spiritus-Regular';
+  src: url('https://cdn.glitch.global/33a2a753-6d80-4052-af24-780bb51141bd/Spiritus-Regular.woff?v=1736858829937') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+p2 {
+  
+  font-size: 11px;
+}
+
+
+body {
+  margin: 0;
+  background-color: white;
+  overflow: hidden;
+}
+
+/* Hidden and Show Modal */
+.show {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+#images {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+#images img {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  transition: transform 1s ease; /* Smooth animation for scaling */
+}
+
+/* Info Button */
+#info-button {
+  position: fixed;
+  bottom: 85px;
+  right: 35px;
+  background: none;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+#info-button:hover {
+  transform: scale(1.1);
+}
+
+/* Initially hide the info box */
+#info-box {
+  display: none; /* Info box is hidden by default */
+  background: white;
+  color: black;
+  width: 80%;
+  max-width: 400px;
+  padding: 20px;
+  border: 1px solid black;
+  border-radius: 10px;
+  text-align: center;
+  font-family: monospace;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 500; /* Ensure it appears above other elements */
+  transform: translate(-50%, -50%); /* Adjust position */
+  position: absolute; /* Required for centering */
+  top: 45%; /* 50% of the screen height */
+  left: 50%; /* 50% of the screen width */
+}
+
+/* Show info box when the 'visible' class is added */
+#info-box.visible {
+  display: block;
+}
+
+
+/* Plus Button */
+#plus-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: black;
+  color: white;
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+#plus-button:hover {
+  transform: scale(1.1);
+}
+
+#snapshot-text {
+  font-family: 'Spiritus-Regular', sans-serif;
+  font-size: 45px;
+  bottom: 5px;
+  margin: 15px;
+}
+
+/* Modal Styling */
+#modal {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  background: white;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  z-index: 20;
+}
+
+#modal-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#close-modal {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: black;
+}
+
+#close-modal:hover {
+  transform: scale(1.1); /* Slight zoom on hover */
+}
+
+#video {
+  display: block;
+  width: 90%;
+  border: 1px solid black;
+  transform: scaleX(-1);
+  bottom: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.button-capture {
+  background: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 50%;
+  font-size: 30px;
+  top: 20px;
+  height: 70px;
+  width: 70px;
+  text-align: center;
+  font-family: 'Topaz8', sans-serif;
+  margin-top: 20px;
+}
+
+.button-capture:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+}
+
+.image-wrapper {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+  cursor: pointer;
+  transform-origin: center;
+}
+
+.image-wrapper.centered {
+  z-index: 1000; /* Bring to the front */
+  transform: translate(-50%, -50%) scale(5); /* Move to center and enlarge */
+  transition: transform 1s ease; /* Smooth transition for movement */
+}
+
+.description {
+  position: absolute; /* Allows precise positioning */
+  max-width: 250px; /* Limit width */
+  text-align: center;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.7); /* Solid background */
+  z-index: 10;
+  word-wrap: break-word; /* Allow text wrapping */
+  white-space: normal; /* Preserve line breaks */
+  pointer-events: none; /* Avoid accidental clicks on the description box */
+  font-family: Monospace;
+  font-size: 2px; /* Default font size */
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth animation */
+}
+
+.image-wrapper.centered .description {
+  max-width: 250px; /* Limit width */
+  overflow-wrap: break-word;
+  overflow: hidden;
+  line-height: 1.5;
+  z-index: 10;
+  word-wrap: break-word; /* Allow text wrapping */
+  white-space: normal; /* Preserve line breaks */
+  transform-origin: top center; /* Keep animation smooth */
+  opacity: 1; /* Ensure visibility */
+  pointer-events: auto; /* Allow interaction */
+  top: 90%; /* Default: Below the image */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Center alignment */
+  font-size: 3px; /* Slightly larger font when expanded */
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#navigate-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  color: black;
+  font-size: 30px;
+  text-decoration: none;
+  z-index: 100; /* Ensure it appears above other elements */
+  font-family: Monospace;
+}
+
+#navigate-button:hover {
+  transform: scale(1.1);
+}
+
+/* Status Message Styles */
+#status-message {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+  color: black;
+  font-family: Monospace;
+}
+
+#loading-indicator {
+  display: none;
+  font-size: 14px;
+  color: black;
+  font-family: Monospace;
+}
+
+#picture-count {
+  position: fixed;
+  bottom: 15px;
+  left: 10px;
+  font-size: 13px;
+  color: black;
+  background: none;
+  padding: 5px;
+  font-family: monospace;
+}
+
+/* Responsive Styles for Mobile Devices */
+ @media (max-width: 768px) {
+  body {
+    overflow-y: auto; /* Allow scrolling on small screens */
+  }
+
+  #video {
+    width: 80%; /* Make video full-width on mobile */
+  }
+
+  #modal {
+    width:  70%; /* Slightly narrower modal on mobile */
+  }
+
+   #info-button {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+}
+   
+  .button-capture {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  #plus-button {
+    width: 45px;
+    height: 45px;
+    font-size: 26px;
+    bottom: 15px;
+    right: 15px;
+    border-radius: 50%;
+  }
+
+  #snapshot-text {
+    font-size: 30px;
+  }
+
+  #picture-count {
+    font-size: 12px;
+  }
+  }
+
