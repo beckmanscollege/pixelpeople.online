@@ -86,7 +86,7 @@ captureButton.addEventListener('click', () => {
     // Show uploading message
     statusMessage.textContent = 'Uploading...';
 
-    fetch('https://pixelpeople6.glitch.me/upload', {
+    fetch('https://cors-anywhere.herokuapp.com/https://pixelpeople6.glitch.me/upload', {
       method: 'POST',
       body: formData,
     })
@@ -125,7 +125,7 @@ function closeModal() {
 
 // Load gallery from the server
 function loadGallery() {
-  fetch('https://pixelpeople6.glitch.me/images')
+  fetch('https://cors-anywhere.herokuapp.com/https://pixelpeople6.glitch.me/images')
     .then((response) => response.json())
     .then((images) => {
       console.log('Fetched images:', images);
