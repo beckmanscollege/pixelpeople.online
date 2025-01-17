@@ -261,7 +261,7 @@ body {
   top: 20px;
   right: 20px;
   color: black;
-  font-size: 15px;
+  font-size: 10px;
   text-decoration: none;
   z-index: 100; /* Ensure it appears above other elements */
   font-family: Monospace;
