@@ -1,3 +1,4 @@
+
 @font-face {
   font-family: 'JiggoVF';
   src: url('https://cdn.glitch.global/33a2a753-6d80-4052-af24-780bb51141bd/JiggoVF.woff?v=1736862148340') format('woff');
@@ -261,7 +262,7 @@ body {
   top: 20px;
   right: 20px;
   color: black;
-  font-size: 15px;
+  font-size: 30px;
   text-decoration: none;
   z-index: 100; /* Ensure it appears above other elements */
   font-family: Monospace;
@@ -341,4 +342,3 @@ body {
     font-size: 12px;
   }
   }
-
