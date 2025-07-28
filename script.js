@@ -125,7 +125,7 @@ function closeModal() {
 
 // Load gallery from the server
 function loadGallery() {
-  fetch('https://pixelpeople6.glitch.me/images')
+  fetch('https://pixelpeople-online.onrender.com/')
     .then((response) => response.json())
     .then((images) => {
       console.log('Fetched images:', images);
