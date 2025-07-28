@@ -86,7 +86,7 @@ captureButton.addEventListener('click', () => {
     // Show uploading message
     statusMessage.textContent = 'Uploading...';
 
-    fetch('https://pixelpeople-online.onrender.com/upload', {
+    fetch('https://pixelpeople-online.onrender.com/', {
       method: 'POST',
       body: formData,
     })
