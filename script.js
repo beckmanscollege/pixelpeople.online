@@ -9,7 +9,7 @@ const imagesContainer = document.getElementById('images');
 const pictureCountElement = document.getElementById('picture-count');
 const closeModalButton = document.getElementById('close-modal');
 const descriptionInput = document.createElement('textarea');
-const BASE_URL = 'https://pixelpeople-online.onrender.com/';
+const BASE_URL = 'https://pixelpeople-online.onrender.com';
 
 // Select the info button and info box
 const infoButton = document.getElementById('info-button');
