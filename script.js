@@ -88,7 +88,7 @@ captureButton.addEventListener('click', () => {
     // Show uploading message
     statusMessage.textContent = 'Uploading...';
 
-    fetch('https://pixelpeople-online.onrender.com/upload', {
+    fetch(`${BASE_URL}/upload`, {
       method: 'POST',
       body: formData,
     })
@@ -127,7 +127,7 @@ function closeModal() {
 
 // Load gallery from the server
 function loadGallery() {
-  fetch('https://pixelpeople-online.onrender.com/images')
+  fetch(`${BASE_URL}/images`)
     .then((response) => response.json())
     .then((images) => {
       console.log('Fetched images:', images);
