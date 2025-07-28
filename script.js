@@ -1,4 +1,3 @@
-
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const modal = document.getElementById('modal');
@@ -8,212 +7,151 @@ const statusMessage = document.getElementById('status-message');
 const imagesContainer = document.getElementById('images');
 const pictureCountElement = document.getElementById('picture-count');
 const closeModalButton = document.getElementById('close-modal');
-const descriptionInput = document.createElement('textarea');
-const BASE_URL = 'https://pixelpeople-online.onrender.com';
+const BASE_URL = 'https://pixelpeople-online.onrender.com'; // ✅ no trailing slash
 
-// Select the info button and info box
+// Info box setup
 const infoButton = document.getElementById('info-button');
 const infoBox = document.getElementById('info-box');
-
-// Show the info box when the '?' button is clicked
-infoButton.addEventListener('click', function(event) {
-    event.stopPropagation(); // Prevent click from closing the box immediately
-    infoBox.classList.toggle('visible'); // Toggle the visibility of the info box
+infoButton.addEventListener('click', e => {
+  e.stopPropagation();
+  infoBox.classList.toggle('visible');
 });
-
-// Hide the info box if clicking outside the button or the info box
-document.addEventListener('click', function(event) {
-    if (!infoButton.contains(event.target) && !infoBox.contains(event.target)) {
-        infoBox.classList.remove('visible'); // Hide the info box if clicked outside
-    }
+document.addEventListener('click', e => {
+  if (!infoBox.contains(e.target) && !infoButton.contains(e.target)) {
+    infoBox.classList.remove('visible');
+  }
 });
-
-// Prevent closing the info box if clicked inside it
-infoBox.addEventListener('click', function(event) {
-    event.stopPropagation(); // Prevent event bubbling
-});
-
+infoBox.addEventListener('click', e => e.stopPropagation());
 
 let pictureCount = 0;
 
-// Add a description input to the modal
+// Create and style description input
+const descriptionInput = document.createElement('textarea');
 descriptionInput.placeholder = 'Enter a description...';
-descriptionInput.style.marginTop = '10px';
-descriptionInput.style.marginBottom = '20px';
-descriptionInput.style.width = '90%';
-descriptionInput.style.height = '50px';
+descriptionInput.style.cssText = 'margin: 10px 0 20px; width: 90%; height: 50px;';
 document.getElementById('modal-content').appendChild(descriptionInput);
 
-// Show modal when clicking on the + button
+// Open modal
 plusButton.addEventListener('click', () => {
   modal.classList.add('show');
   modal.classList.remove('hidden');
 });
 
-// Request access to the user's camera
-navigator.mediaDevices
-  .getUserMedia({ video: true })
-  .then((stream) => {
-    video.srcObject = stream;
-  })
-  .catch((err) => console.error('Error accessing camera:', err));
+// Access camera (can fail silently)
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(stream => video.srcObject = stream)
+  .catch(err => console.warn('Camera not available:', err.message));
 
-// Capture and upload the image
+// Upload snapshot
 captureButton.addEventListener('click', () => {
   const description = descriptionInput.value.trim();
-  if (!description) {
-    alert('Please enter a description before uploading.');
-    return;
-  }
+  if (!description) return alert('Please enter a description before uploading.');
 
   const context = canvas.getContext('2d');
   canvas.width = 40;
   canvas.height = 40;
-
-  // Draw the video frame on the canvas
   context.drawImage(video, 0, 0, 40, 40);
 
-  // Convert the canvas content to a Blob
-  canvas.toBlob((blob) => {
-    if (!blob) {
-      console.error('Blob generation failed.');
-      statusMessage.textContent = 'Failed to capture the image.';
-      return;
-    }
+  canvas.toBlob(blob => {
+    if (!blob) return (statusMessage.textContent = 'Failed to capture the image.');
 
     const formData = new FormData();
     formData.append('image', blob, 'snapshot.png');
     formData.append('description', description);
-
-    // Show uploading message
     statusMessage.textContent = 'Uploading...';
 
-    fetch(`${BASE_URL}/upload`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log('Description uploaded:', description); // Debug the uploaded description
-          return response.json();
-        } else {
-          throw new Error('Upload failed');
-        }
-      })
-      .then((data) => {
-        console.log('Upload response data:', data); // Debug server response
+    fetch(`${BASE_URL}/upload`, { method: 'POST', body: formData })
+      .then(res => res.ok ? res.json() : Promise.reject('Upload failed'))
+      .then(data => {
         if (data.success) {
           statusMessage.textContent = 'Upload Successful!';
-          loadGallery(); // Refresh the gallery
-          descriptionInput.value = ''; // Clear description
+          loadGallery();
+          descriptionInput.value = '';
           setTimeout(closeModal, 1500);
         } else {
-          statusMessage.textContent = 'Upload Failed!';
+          statusMessage.textContent = 'Upload failed on server.';
         }
       })
-      .catch((error) => {
-        console.error('Upload error:', error);
-        statusMessage.textContent = 'An error occurred.';
+      .catch(err => {
+        console.error('Upload error:', err);
+        statusMessage.textContent = 'Error during upload.';
       });
   });
 });
 
-// Close the modal
+// Close modal
 function closeModal() {
   modal.classList.remove('show');
   modal.classList.add('hidden');
   statusMessage.textContent = '';
 }
 
-// Load gallery from the server
+// Load and display gallery
 function loadGallery() {
-  fetch(`${BASE_URL}/images`)
-    .then((response) => response.json())
-    .then((images) => {
-      console.log('Fetched images:', images);
-      imagesContainer.innerHTML = ''; // Clear the gallery
+  const endpoint = `${BASE_URL}/images`; // ✅ no double slash
+  console.log('Fetching from:', endpoint);
 
+  fetch(endpoint)
+    .then(res => res.json())
+    .then(images => {
+      imagesContainer.innerHTML = '';
       const containerWidth = imagesContainer.offsetWidth;
       const containerHeight = imagesContainer.offsetHeight;
 
       images.forEach(({ url, description }) => {
-        console.log('Image description:', description); // Debug the loaded description
-        const imgWrapper = document.createElement('div');
-        imgWrapper.classList.add('image-wrapper');
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('image-wrapper');
 
         const img = document.createElement('img');
         img.src = url;
         img.classList.add('gallery-image');
-        imgWrapper.appendChild(img);
+        wrapper.appendChild(img);
 
- imgWrapper.addEventListener('click', () => {
-  imgWrapper.classList.toggle('expanded');
+        wrapper.addEventListener('click', () => {
+          const desc = wrapper.querySelector('.description') || document.createElement('div');
+          if (!wrapper.classList.contains('expanded')) {
+            wrapper.classList.add('expanded', 'centered');
+            desc.className = 'description';
+            desc.textContent = description || 'No description available';
+            desc.style.cssText = `
+              transform: scale(1);
+              width: auto;
+              max-width: 250px;
+              padding: 5px 10px;
+              word-wrap: break-word;
+              white-space: normal;
+              left: 50%;
+              transform: translateX(-50%);
+            `;
+            const rect = wrapper.getBoundingClientRect();
+            const containerRect = imagesContainer.getBoundingClientRect();
+            desc.style.top = (rect.bottom + 200 > containerRect.bottom) ? 'auto' : '110%';
+            desc.style.bottom = (rect.bottom + 200 > containerRect.bottom) ? '110%' : 'auto';
+            wrapper.appendChild(desc);
+          } else {
+            wrapper.classList.remove('expanded', 'centered');
+            if (desc) desc.remove();
+          }
+        });
 
-  const existingDesc = imgWrapper.querySelector('.description');
+        const x = Math.random() * (containerWidth - 40);
+        const y = Math.random() * (containerHeight - 40);
+        wrapper.style.left = `${x}px`;
+        wrapper.style.top = `${y}px`;
 
-  if (!imgWrapper.classList.contains('expanded')) {
-    // Reset styles when collapsing
-    imgWrapper.classList.remove('centered');
-    if (existingDesc) existingDesc.remove();
-  } else {
-    imgWrapper.classList.add('centered');
-
-    // Create or reuse the description box
-    const desc = existingDesc || document.createElement('div');
-    if (!existingDesc) {
-      desc.className = 'description';
-      desc.textContent = description || 'No description available'; // Fallback for missing descriptions
-      imgWrapper.appendChild(desc);
-    }
-
-    // Style the description box for proper wrapping
-    desc.style.transform = 'scale(1)'; // Prevent scaling
-    desc.style.width = 'auto'; // Keep natural width
-    desc.style.maxWidth = '250px'; // Limit width to approximately 25 characters
-    desc.style.padding = '5px 10px'; // Maintain small padding
-    desc.style.wordWrap = 'break-word'; // Ensure long words break
-    desc.style.whiteSpace = 'normal'; // Allow normal text wrapping
-
-    // Calculate the position of the description box
-    const wrapperRect = imgWrapper.getBoundingClientRect();
-    const containerRect = imagesContainer.getBoundingClientRect();
-
-    if (wrapperRect.bottom + 200 > containerRect.bottom) {
-      // Position the description above the image
-      desc.style.top = 'auto'; // Reset any existing bottom positioning
-      desc.style.bottom = '110%'; // Position above
-    } else {
-      // Position the description below the image
-      desc.style.bottom = 'auto'; // Reset any existing top positioning
-      desc.style.top = '110%'; // Position below
-    }
-
-    // Center description horizontally with respect to the image
-    desc.style.left = '50%';
-    desc.style.transform = 'translateX(-50%)'; // Center horizontally
-  }
-});
-
-
-        // Randomize position
-        const randomLeft = Math.random() * (containerWidth - 40);
-        const randomTop = Math.random() * (containerHeight - 40);
-
-        imgWrapper.style.left = `${randomLeft}px`;
-        imgWrapper.style.top = `${randomTop}px`;
-
-        imagesContainer.appendChild(imgWrapper);
+        imagesContainer.appendChild(wrapper);
       });
 
-      // Update picture count
       pictureCount = images.length;
       pictureCountElement.textContent = `Pictures Taken: ${pictureCount}`;
     })
-    .catch((err) => console.error('Error loading gallery:', err));
+    .catch(err => {
+      console.error('Error loading gallery:', err);
+    });
 }
 
-// Close modal on close button click
+// Close modal button
 closeModalButton.addEventListener('click', closeModal);
 
-// Initialize the gallery and picture count
+// Initial load
 loadGallery();
