@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log('Cloud name:', process.env.CLOUDINARY_CLOUD_NAME);
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const cloudinary = require('cloudinary').v2;
